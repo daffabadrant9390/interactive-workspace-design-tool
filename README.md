@@ -1,6 +1,6 @@
-# Design Your Workspace: Desent Solutions Developer Challenge
+# Design Your Workspace: Desent Solutions Developer Challenge - M. Daffa Badran Thoriq
 
-An interactive, Sims style workspace designer for **monis.rent**. Instead of a
+An interactive, The SIMS game style workspace designer for **monis.rent**. Instead of a
 flat product catalog, the customer builds their setup in a small 3D room:
 placing a desk, a chair, monitors, and accessories, watching a live price as
 they go, and getting a shareable link that they (or our sales team) can act
