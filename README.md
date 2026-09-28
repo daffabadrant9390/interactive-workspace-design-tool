@@ -10,8 +10,8 @@ for everything deliberately left out of scope.
 
 ## Live demo
 
-- App: _add your deployed Vercel URL here_
-- Repo: _add your GitHub URL here_
+- App: [interactive-workspace-design-tool.vercel.app](https://interactive-workspace-design-tool.vercel.app)
+- Repo: [github.com/daffabadrant9390/interactive-workspace-design-tool](https://github.com/daffabadrant9390/interactive-workspace-design-tool)
 
 ## The core idea
 
