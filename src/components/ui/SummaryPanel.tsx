@@ -27,6 +27,7 @@ export function SummaryPanel() {
   const [contactEmail, setContactEmail] = useState("");
   const [note, setNote] = useState("");
   const [requestState, setRequestState] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [requestEmailSent, setRequestEmailSent] = useState(false);
 
   const isEmpty = floorItems.length === 0 && deskItems.length === 0;
 
@@ -63,6 +64,8 @@ export function SummaryPanel() {
         body: JSON.stringify({ designId, contactName, contactEmail, note }),
       });
       if (!res.ok) throw new Error();
+      const data = await res.json().catch(() => ({}));
+      setRequestEmailSent(Boolean(data.emailSent));
       setRequestState("sent");
     } catch {
       setRequestState("error");
@@ -159,7 +162,11 @@ export function SummaryPanel() {
                 Request This Setup →
               </button>
             ) : requestState === "sent" ? (
-              <p className="text-center text-accent">Thanks — we&apos;ll follow up shortly!</p>
+              <p className="text-center text-accent">
+                {requestEmailSent
+                  ? "Thanks — check your email for a confirmation and invoice!"
+                  : "Thanks — we'll follow up shortly!"}
+              </p>
             ) : (
               <div className="space-y-1.5">
                 <input
