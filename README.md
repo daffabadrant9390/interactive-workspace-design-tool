@@ -163,13 +163,14 @@ years.
 | Validation | Zod | Both for the placement rules' inputs and API payloads |
 | Database | Postgres via **Neon** (free tier) + Drizzle ORM | Free, doesn't sleep after inactivity (unlike Supabase's free tier), has a first-class Vercel integration |
 | AI | Vercel AI SDK + `@ai-sdk/google` (Gemini) | Free tier available; `generateObject` gives a typed, schema-constrained response so the model can't suggest items that don't exist |
+| Email | Resend + `@react-pdf/renderer` | Free tier available; sends the "Request This Setup" confirmation with a generated PDF invoice attached |
 | Hosting | Vercel (Hobby) | Free, zero-config for Next.js |
 
 ## Running locally
 
 ```bash
 npm install
-cp .env.example .env.local   # fill in DATABASE_URL (and optionally the Gemini key)
+cp .env.example .env.local   # fill in DATABASE_URL (and optionally the Gemini and Resend keys)
 npm run dev
 ```
 
@@ -177,7 +178,9 @@ The app works with **no environment variables at all**: the 3D designer,
 pricing, and bundle logic all run without a database. Only "Save & Get
 Link", the shared `/d/[id]` view, and "Request This Setup" need
 `DATABASE_URL`. The AI advisor needs `GOOGLE_GENERATIVE_AI_API_KEY`, or it
-quietly falls back to the rule based advisor.
+quietly falls back to the rule based advisor. The confirmation email needs
+`RESEND_API_KEY`, or "Request This Setup" still saves the lead, it just
+skips sending anything.
 
 ### Setting up the free database (2 minutes)
 
@@ -197,6 +200,22 @@ Note: Gemini's free tier has a small daily request cap, which is why there
 is a per-IP rate limit in `src/app/api/advisor/route.ts`. It exists so one
 visitor mashing the button doesn't burn the whole day's quota for everyone
 else looking at the demo.
+
+### Setting up the free confirmation email (optional, 2 minutes)
+
+1. Create a free account at [resend.com](https://resend.com) and grab an API
+   key from [resend.com/api-keys](https://resend.com/api-keys). The free tier
+   covers 3,000 emails a month with no card required.
+2. Set `RESEND_API_KEY` in `.env.local` / Vercel.
+3. Leave `RESEND_FROM_EMAIL` unset for local testing, it defaults to Resend's
+   shared test sender. A real deployment would set it to an address on a
+   domain verified in Resend.
+
+Clicking "Request This Setup" then sends the person a confirmation email
+(`src/lib/email/request-confirmation-template.ts`) with the item list, the
+applied bundle discount if any, and the total, plus the same numbers as a
+downloadable PDF invoice (`src/lib/email/invoice-pdf.tsx`, built with
+`@react-pdf/renderer`) attached to the email.
 
 ## Testing
 
