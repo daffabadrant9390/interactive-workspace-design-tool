@@ -1,11 +1,11 @@
 import type { CatalogItem } from "./types";
 
 /**
- * Seed catalog, styled after monis.rent's real furniture-rental categories
+ * Seed catalog, styled after a typical furniture-rental brand's categories
  * (desks, chairs, monitors, office accessories) plus a small "break corner"
  * pulled from the brief's sketch (coffee, lounge). Prices are ILLUSTRATIVE
- * placeholders — monis.rent doesn't expose numeric prices publicly, so these
- * exist only to make the checkout flow demonstrable. See README.
+ * placeholders made up for this demo, so these exist only to make the
+ * checkout flow demonstrable. See README.
  */
 export const CATALOG: CatalogItem[] = [
   // ---- Desks (floor, 2 tiles wide) ----
@@ -18,7 +18,7 @@ export const CATALOG: CatalogItem[] = [
     weeklyPriceUsdCents: 1200,
     color: "#c9a679",
     description: "Space-saving desk, ideal for a laptop or a single monitor.",
-    brand: "monis.rent",
+    brand: "CiptaForge",
     desk: { widthCm: 110, maxMonitors: 1, accessorySlots: 2 },
   },
   {
@@ -30,7 +30,7 @@ export const CATALOG: CatalogItem[] = [
     weeklyPriceUsdCents: 1800,
     color: "#b98d5f",
     description: "Electric sit-stand desk with room for a dual-monitor setup.",
-    brand: "monis.rent",
+    brand: "CiptaForge",
     desk: { widthCm: 140, maxMonitors: 2, accessorySlots: 3 },
   },
   {
@@ -42,7 +42,7 @@ export const CATALOG: CatalogItem[] = [
     weeklyPriceUsdCents: 2200,
     color: "#8a5a3b",
     description: "Dual-motor standing desk built for ultrawide monitors and full rigs.",
-    brand: "monis.rent",
+    brand: "CiptaForge",
     desk: { widthCm: 160, maxMonitors: 2, accessorySlots: 4 },
   },
 
