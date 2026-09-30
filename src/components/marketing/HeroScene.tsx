@@ -3,7 +3,7 @@
 import { Suspense, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { ContactShadows, PerspectiveCamera } from "@react-three/drei";
-import type { Group } from "three";
+import type { Group, PerspectiveCamera as ThreePerspectiveCamera } from "three";
 import { getCatalogItem } from "@/lib/catalog";
 import { getFloorRecipe, getDeskSlotRecipe } from "@/components/scene/furniture-recipes";
 import { PartsGroup } from "@/components/scene/PartsGroup";
@@ -68,7 +68,12 @@ export function HeroScene() {
       className="!touch-none"
     >
       <color attach="background" args={["#131826"]} />
-      <PerspectiveCamera makeDefault position={[3.2, 2.6, 4]} fov={38} />
+      <PerspectiveCamera
+        makeDefault
+        position={[3.2, 2.6, 4]}
+        fov={38}
+        onUpdate={(camera: ThreePerspectiveCamera) => camera.lookAt(0, 0.5, 0)}
+      />
       <ambientLight intensity={0.8} />
       <directionalLight position={[4, 6, 3]} intensity={1.1} />
       <Suspense fallback={null}>

@@ -28,6 +28,7 @@ export function PartsGroup({ parts, baseColor }: { parts: Part[]; baseColor: str
           rotation={part.rotation ?? [0, 0, 0]}
           castShadow={false}
           receiveShadow={false}
+          dispose={null}
         />
       ))}
     </group>
