@@ -72,6 +72,8 @@ export interface PlacedDeskItem {
   slotIndex: number;
   /** Optional color override chosen in the preview modal; falls back to the catalog item's color. */
   color?: string;
+  /** Cosmetic orientation on the desk, same idea as PlacedFloorItem.rotationY. Defaults to 0. */
+  rotationY?: 0 | 90 | 180 | 270;
 }
 
 export interface Design {

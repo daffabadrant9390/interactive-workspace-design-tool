@@ -243,6 +243,56 @@ describe("removeDeskItem", () => {
   });
 });
 
+describe("rotateDeskItem", () => {
+  function placeDeskWithItem(catalogId = "acc-lamp") {
+    useDesignStore.getState().setPending({ kind: "floor", catalogId: "desk-standard" });
+    useDesignStore.getState().placeFloorItem({ x: 0, z: 0 });
+    const deskId = useDesignStore.getState().floorItems[0].instanceId;
+    useDesignStore.getState().selectDesk(deskId);
+    useDesignStore.getState().addDeskSlotItem(catalogId);
+    return useDesignStore.getState().deskItems[0].instanceId;
+  }
+
+  it("starts a new desk item at rotationY 0", () => {
+    placeDeskWithItem();
+    expect(useDesignStore.getState().deskItems[0].rotationY).toBe(0);
+  });
+
+  it("cycles rotationY by 90 degrees on every call, wrapping past 270", () => {
+    const id = placeDeskWithItem();
+    const expected = [90, 180, 270, 0];
+    for (const rotation of expected) {
+      useDesignStore.getState().rotateDeskItem(id);
+      expect(useDesignStore.getState().deskItems[0].rotationY).toBe(rotation);
+    }
+  });
+
+  it("does nothing for an instance id that doesn't exist", () => {
+    placeDeskWithItem();
+    useDesignStore.getState().rotateDeskItem("nope");
+    expect(useDesignStore.getState().deskItems[0].rotationY).toBe(0);
+  });
+
+  it("leaves other desk items on the same desk untouched", () => {
+    placeDeskWithItem("acc-lamp");
+    useDesignStore.getState().addDeskSlotItem("acc-keyboard");
+    const [lamp, keyboard] = useDesignStore.getState().deskItems;
+
+    useDesignStore.getState().rotateDeskItem(keyboard.instanceId);
+
+    const state = useDesignStore.getState();
+    expect(state.deskItems.find((d) => d.instanceId === lamp.instanceId)?.rotationY).toBe(0);
+    expect(state.deskItems.find((d) => d.instanceId === keyboard.instanceId)?.rotationY).toBe(90);
+  });
+
+  it("records a history entry so rotation can be undone", () => {
+    const id = placeDeskWithItem();
+    const historyBefore = useDesignStore.getState().history.length;
+    useDesignStore.getState().rotateDeskItem(id);
+    expect(useDesignStore.getState().history.length).toBe(historyBefore + 1);
+  });
+});
+
 describe("rotateFloorItem", () => {
   it("rotates by 90 degrees, wrapping from 270 back to 0", () => {
     useDesignStore.getState().setPending({ kind: "floor", catalogId: "chair-ergonomic" });

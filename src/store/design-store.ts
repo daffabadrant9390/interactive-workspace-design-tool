@@ -53,6 +53,7 @@ interface DesignState {
   removeFloorItem: (instanceId: string) => void;
   removeDeskItem: (instanceId: string) => void;
   rotateFloorItem: (instanceId: string) => void;
+  rotateDeskItem: (instanceId: string) => void;
   selectDesk: (instanceId: string | null) => void;
   selectFloorItem: (instanceId: string | null) => void;
   setDuration: (d: DurationOption) => void;
@@ -178,6 +179,7 @@ export const useDesignStore = create<DesignState>((set, get) => ({
       deskInstanceId: desk.instanceId,
       slotIndex,
       color,
+      rotationY: 0,
     };
 
     set((state) => ({
@@ -233,6 +235,22 @@ export const useDesignStore = create<DesignState>((set, get) => ({
         future: [],
         floorItems: state.floorItems.map((f) =>
           f.instanceId === instanceId ? { ...f, rotationY: nextRotation } : f,
+        ),
+      };
+    });
+  },
+
+  rotateDeskItem: (instanceId) => {
+    set((state) => {
+      const target = state.deskItems.find((d) => d.instanceId === instanceId);
+      if (!target) return state;
+      const nextRotation = (((target.rotationY ?? 0) + 90) % 360) as 0 | 90 | 180 | 270;
+      return {
+        ...state,
+        history: [...state.history, snapshot(state)],
+        future: [],
+        deskItems: state.deskItems.map((d) =>
+          d.instanceId === instanceId ? { ...d, rotationY: nextRotation } : d,
         ),
       };
     });

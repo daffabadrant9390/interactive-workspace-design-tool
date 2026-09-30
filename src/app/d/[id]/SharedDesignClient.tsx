@@ -40,7 +40,7 @@ export function SharedDesignClient({ design }: { design: DesignRow }) {
           <span>
             Viewing a saved design — feel free to tweak it, it won&apos;t overwrite the original link.
           </span>
-          <Link href="/" className="font-semibold underline">
+          <Link href="/design" className="font-semibold underline">
             Start a new design
           </Link>
         </div>
