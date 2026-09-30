@@ -3,9 +3,9 @@ import Link from "next/link";
 import { HeroScene } from "@/components/marketing/HeroScene";
 
 export const metadata: Metadata = {
-  title: "monis.rent | Rent a workspace, not just furniture",
+  title: "CiptaForge | Rent a workspace, not just furniture",
   description:
-    "Design your home office in 3D before you rent a single thing. Pick a desk, chair, monitors and more, see the price update live, then get it delivered.",
+    "CiptaForge lets you design your home office in 3D before you rent a single thing. Pick a desk, chair, monitors and more, see the price update live, then get it delivered.",
 };
 
 const steps = [
@@ -44,7 +44,7 @@ export default function Home() {
       <header className="border-b border-border">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <span className="text-lg font-semibold tracking-tight">
-            monis<span className="text-accent">.</span>rent
+            Cipta<span className="text-accent">Forge</span>
           </span>
           <Link
             href="/design"
@@ -151,8 +151,8 @@ export default function Home() {
       </main>
 
       <footer className="border-t border-border px-6 py-6 text-center text-xs text-muted">
-        monis.rent is a rental equipment brand. Prices shown in the designer are illustrative
-        placeholders for this demo.
+        CiptaForge is a rental equipment brand by Cipta Forge Indonesia. Prices shown in the
+        designer are illustrative placeholders for this demo.
       </footer>
     </div>
   );

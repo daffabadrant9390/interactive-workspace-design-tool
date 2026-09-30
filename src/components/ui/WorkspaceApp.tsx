@@ -15,7 +15,7 @@ export function WorkspaceApp({ banner }: { banner?: ReactNode }) {
       <header className="flex items-center justify-between border-b border-border bg-surface px-4 py-3">
         <div>
           <h1 className="text-sm font-semibold tracking-tight">
-            Design Your Workspace <span className="text-muted">· monis.rent</span>
+            Design Your Workspace <span className="text-muted">· CiptaForge</span>
           </h1>
           <p className="text-xs text-muted">
             Preview an item on the left, then place it in the room. Hover a placed item for move / rotate / remove.

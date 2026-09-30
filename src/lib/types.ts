@@ -33,7 +33,7 @@ export interface MonitorSpec {
   minDeskWidthCm: number;
 }
 
-/** A product as it appears in the rentable catalog (mirrors monis.rent style data). */
+/** A product as it appears in the rentable catalog. */
 export interface CatalogItem {
   id: string;
   name: string;

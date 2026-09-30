@@ -1,7 +1,7 @@
 import { getCatalogItem } from "./catalog";
 import type { AppliedBundle, PlacedDeskItem, PlacedFloorItem } from "./types";
 
-/** Renting by the month is ~30% cheaper per week, mirroring monis.rent's real discount tiers. */
+/** Renting by the month is about 30 percent cheaper per week, a typical discount tier for this kind of rental. */
 export const MONTHLY_DISCOUNT = 0.3;
 export const WEEKS_PER_MONTH = 4;
 

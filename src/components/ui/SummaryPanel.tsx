@@ -197,7 +197,7 @@ export function SummaryPanel() {
           </div>
         )}
         <p className="text-[10px] leading-snug text-muted">
-          Prices are illustrative placeholders for this demo, not live monis.rent pricing.
+          Prices are illustrative placeholders for this demo, not live CiptaForge pricing.
         </p>
       </div>
     </div>

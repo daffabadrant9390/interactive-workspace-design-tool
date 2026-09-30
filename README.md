@@ -1,6 +1,8 @@
-# Design Your Workspace: Desent Solutions Developer Challenge - M. Daffa Badran Thoriq
+# Design Your Workspace: Desent Solutions Developer Challenge
 
-An interactive, The SIMS game style workspace designer for **monis.rent**. Instead of a
+An interactive, Sims style workspace designer for **CiptaForge**, a fictional
+workspace equipment rental brand by Cipta Forge Indonesia, built for this
+challenge. Instead of a
 flat product catalog, the customer builds their setup in a small 3D room:
 placing a desk, a chair, monitors, and accessories, watching a live price as
 they go, and getting a shareable link that they (or our sales team) can act
@@ -30,7 +32,7 @@ cleanly onto a rental catalog.
   promises something the click won't deliver.
 - **Desks have slots.** Monitors and accessories don't sit on the floor;
   they attach to a specific desk, and the desk's real width (from
-  monis.rent's actual size options: 110, 120, 140, and 160cm) decides what
+  CiptaForge's catalog size options: 110, 120, 140, and 160cm) decides what
   fits. Try dragging a 34 inch curved monitor onto the compact desk and it
   gets refused with a plain English reason.
 - **One click persona quick starts** (Freelance Developer, Day Trader,
@@ -101,8 +103,8 @@ Plus the "extraordinary" asks from the brief:
   key, the quota is exhausted, or the call errors, it falls back to a
   deterministic keyword based advisor (`src/lib/advisor-fallback.ts`) so
   the feature never just breaks in a demo.
-- **Bundle detection**, mirroring monis.rent's real "The Essentials" and
-  "The Trading Setup" bundles. Build a desk, chair, and curved monitor
+- **Bundle detection**, styled after common furniture-rental bundle deals
+  such as "The Essentials" and "The Trading Setup". Build a desk, chair, and curved monitor
   together and the summary panel automatically applies a 20% bundle
   discount.
 - **A "Request This Setup" flow.** After saving, a tiny contact form
@@ -266,7 +268,7 @@ Given more than a weekend:
 - **Real 3D models** for furniture (with Draco/meshopt compression),
   replacing the procedural low poly primitives once there's budget for an
   asset pipeline and licensing.
-- **Live monis.rent catalog and availability**, pulled by delivery date,
+- **A live catalog and availability feed**, pulled by delivery date,
   instead of a small hardcoded seed catalog with placeholder prices.
 - **Full lifestyle zones from the brief's sketch**: outdoor gear, garage
   space, a proper multi zone layout instead of one shared room.
@@ -280,21 +282,21 @@ Given more than a weekend:
   flow.
 - **Keyboard accessible placement** (arrow keys plus Enter to place) as an
   alternative to click only interaction, for accessibility.
-- **Currency and locale support** to match monis.rent's actual USD pricing
-  model once real prices are available (see note below).
+- **Currency and locale support** to match a real regional pricing model
+  once actual prices are available (see note below).
 
 ## Honest caveats
 
-- **Prices are illustrative placeholders.** monis.rent doesn't expose
-  numeric pricing publicly (their product pages only show "From $/week"),
-  so I invented reasonable looking weekly rates to make the checkout flow
+- **Prices are illustrative placeholders.** CiptaForge is a fictional brand
+  built for this challenge, so there is no real pricing to pull from. I
+  invented reasonable looking weekly rates to make the checkout flow
   demonstrable. This is called out in the UI itself, not just here.
-- **The catalog is a small seed set** (16 items), not the real monis.rent
+- **The catalog is a small seed set** (16 items), not a full real world
   inventory. It's enough to cover "at least two desks and chairs"
   comfortably and to show the compatibility rules doing real work (a 34
   inch curved monitor genuinely won't fit the compact desk), without
   spending the whole time budget on data entry.
 - **No payment integration.** "Request This Setup" captures a lead
-  instead of charging a card, since monis.rent's own checkout, deposit,
-  and logistics rules are more involved than a four to eight hour scope
+  instead of charging a card, since a real checkout, deposit, and
+  logistics flow is more involved than a four to eight hour scope
   should try to replicate.
