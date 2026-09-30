@@ -31,5 +31,10 @@ export function isEmailConfigured(): boolean {
  * address on a verified domain instead.
  */
 export function getFromAddress(): string {
-  return process.env.RESEND_FROM_EMAIL ?? "CiptaForge <onboarding@resend.dev>";
+  const raw = process.env.RESEND_FROM_EMAIL?.trim();
+  // An env var that's set but blank (or pasted with stray quotes/whitespace)
+  // must NOT be treated as a valid override — `??` alone would let an empty
+  // string through, producing a `from` field Resend rejects as malformed.
+  if (!raw) return "CiptaForge <onboarding@resend.dev>";
+  return raw;
 }
