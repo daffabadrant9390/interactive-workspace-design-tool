@@ -1,8 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { useDesignStore } from "@/store/design-store";
-import { computePriceBreakdown, formatUsd } from "@/lib/pricing";
+import { useUiStore } from "@/store/ui-store";
+import { computePriceBreakdown } from "@/lib/pricing";
+import { formatCurrency } from "@/lib/currency";
 
 export function SummaryPanel() {
   const floorItems = useDesignStore((s) => s.floorItems);
@@ -11,6 +14,8 @@ export function SummaryPanel() {
   const cycles = useDesignStore((s) => s.cycles);
   const removeFloorItem = useDesignStore((s) => s.removeFloorItem);
   const removeDeskItem = useDesignStore((s) => s.removeDeskItem);
+  const dragModeActive = useDesignStore((s) => s.dragModeActive);
+  const currency = useUiStore((s) => s.currency);
 
   const breakdown = useMemo(
     () => computePriceBreakdown(floorItems, deskItems, duration, cycles),
@@ -99,7 +104,7 @@ export function SummaryPanel() {
               <span className="truncate pr-2">{line.name}</span>
               <div className="flex items-center gap-2">
                 <span className="whitespace-nowrap font-medium text-accent">
-                  {formatUsd(line.discountedWeeklyCents)}/wk
+                  {formatCurrency(line.discountedWeeklyCents, currency)}/wk
                 </span>
                 <button
                   onClick={() =>
@@ -107,7 +112,8 @@ export function SummaryPanel() {
                       ? removeFloorItem(line.instanceId)
                       : removeDeskItem(line.instanceId)
                   }
-                  className="text-muted hover:text-invalid"
+                  disabled={dragModeActive}
+                  className="text-muted hover:text-invalid disabled:cursor-not-allowed disabled:opacity-30"
                   aria-label={`Remove ${line.name}`}
                 >
                   ✕
@@ -121,11 +127,11 @@ export function SummaryPanel() {
       <div className="space-y-3 border-t border-border px-4 py-3">
         <div className="flex items-center justify-between text-sm text-muted">
           <span>Weekly subtotal</span>
-          <span>{formatUsd(breakdown.weeklySubtotalCents)}</span>
+          <span>{formatCurrency(breakdown.weeklySubtotalCents, currency)}</span>
         </div>
         <div className="flex items-center justify-between text-base font-semibold">
           <span>Total ({breakdown.totalWeeks} weeks)</span>
-          <span>{formatUsd(breakdown.grandTotalCents)}</span>
+          <span>{formatCurrency(breakdown.grandTotalCents, currency)}</span>
         </div>
 
         <button
@@ -153,6 +159,14 @@ export function SummaryPanel() {
                 Copy
               </button>
             </div>
+            {designId && (
+              <Link
+                href={`/compare?a=${encodeURIComponent(designId)}`}
+                className="block text-center font-medium text-accent underline"
+              >
+                Compare with another design →
+              </Link>
+            )}
 
             {!requestOpen ? (
               <button
@@ -205,6 +219,7 @@ export function SummaryPanel() {
         )}
         <p className="text-[10px] leading-snug text-muted">
           Prices are illustrative placeholders for this demo, not live CiptaForge pricing.
+          {currency === "IDR" && " IDR shown at a fixed demo rate, not a live exchange rate."}
         </p>
       </div>
     </div>

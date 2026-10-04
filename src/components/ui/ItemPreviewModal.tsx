@@ -3,8 +3,9 @@
 import { useState } from "react";
 import clsx from "clsx";
 import { COLOR_PALETTE, CM_PER_TILE } from "@/lib/catalog";
-import { formatUsd } from "@/lib/pricing";
+import { formatCurrency } from "@/lib/currency";
 import { useDesignStore } from "@/store/design-store";
+import { useUiStore } from "@/store/ui-store";
 import { ItemThumbnail } from "./ItemThumbnail";
 import type { CatalogItem } from "@/lib/types";
 
@@ -24,6 +25,7 @@ export function ItemPreviewModal({
   const setPending = useDesignStore((s) => s.setPending);
   const addDeskSlotItem = useDesignStore((s) => s.addDeskSlotItem);
   const selectedDeskInstanceId = useDesignStore((s) => s.selectedDeskInstanceId);
+  const currency = useUiStore((s) => s.currency);
 
   const isFloor = item.placement === "floor";
   const palette = paletteFor(item);
@@ -69,7 +71,7 @@ export function ItemPreviewModal({
         <dl className="mt-3 grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
           <dt className="text-muted">Price</dt>
           <dd className="text-right font-semibold text-accent">
-            {formatUsd(item.weeklyPriceUsdCents)}/week
+            {formatCurrency(item.weeklyPriceUsdCents, currency)}/week
           </dd>
 
           <dt className="text-muted">Size</dt>

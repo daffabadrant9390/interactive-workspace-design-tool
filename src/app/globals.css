@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
-:root {
+:root,
+:root[data-theme="dark"] {
   --background: #0b0f19;
   --surface: #131826;
   --surface-2: #1a2133;
@@ -11,6 +12,21 @@
   --accent-foreground: #1a1305;
   --valid: #4ade80;
   --invalid: #f87171;
+}
+
+/* Warm off-white light mode, kept at the same contrast ratios as dark so
+   nothing needs per-component overrides — only the token values change. */
+:root[data-theme="light"] {
+  --background: #faf8f4;
+  --surface: #ffffff;
+  --surface-2: #f1efe9;
+  --border: #e3ded3;
+  --foreground: #1c1a16;
+  --muted: #6b6457;
+  --accent: #f2a93b;
+  --accent-foreground: #1a1305;
+  --valid: #15803d;
+  --invalid: #dc2626;
 }
 
 @theme inline {
