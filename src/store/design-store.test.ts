@@ -553,6 +553,65 @@ describe("clearPending / setPending", () => {
   });
 });
 
+describe("dragModeActive", () => {
+  it("toggleDragMode flips the flag", () => {
+    expect(useDesignStore.getState().dragModeActive).toBe(false);
+    useDesignStore.getState().toggleDragMode();
+    expect(useDesignStore.getState().dragModeActive).toBe(true);
+    useDesignStore.getState().toggleDragMode();
+    expect(useDesignStore.getState().dragModeActive).toBe(false);
+  });
+
+  it("turning it on cancels any pending placement and selection", () => {
+    useDesignStore.getState().setPending({ kind: "floor", catalogId: "chair-ergonomic" });
+    useDesignStore.getState().selectDesk("some-desk");
+    useDesignStore.getState().selectFloorItem("some-floor-item");
+
+    useDesignStore.getState().setDragModeActive(true);
+
+    const state = useDesignStore.getState();
+    expect(state.pending).toBeNull();
+    expect(state.selectedDeskInstanceId).toBeNull();
+    expect(state.selectedFloorInstanceId).toBeNull();
+  });
+
+  it("blocks placing, moving, selecting, and toolbar actions while active", () => {
+    useDesignStore.getState().setPending({ kind: "floor", catalogId: "chair-ergonomic" });
+    useDesignStore.getState().setDragModeActive(true);
+
+    // setPending/clearPending/placeFloorItem are all no-ops now.
+    useDesignStore.getState().setPending({ kind: "floor", catalogId: "desk-standard" });
+    useDesignStore.getState().placeFloorItem({ x: 0, z: 0 });
+    expect(useDesignStore.getState().floorItems).toHaveLength(0);
+    expect(useDesignStore.getState().pending).toBeNull();
+
+    useDesignStore.getState().selectFloorItem("x");
+    useDesignStore.getState().selectDesk("x");
+    expect(useDesignStore.getState().selectedFloorInstanceId).toBeNull();
+    expect(useDesignStore.getState().selectedDeskInstanceId).toBeNull();
+
+    useDesignStore.getState().setDuration("month");
+    useDesignStore.getState().setCycles(5);
+    expect(useDesignStore.getState().duration).toBe("week");
+    expect(useDesignStore.getState().cycles).toBe(1);
+
+    useDesignStore.getState().reset();
+    useDesignStore.getState().undo();
+    useDesignStore.getState().redo();
+    // None of those should throw, and none should change anything while active.
+    expect(useDesignStore.getState().dragModeActive).toBe(true);
+  });
+
+  it("actions resume normally once drag mode is turned back off", () => {
+    useDesignStore.getState().setDragModeActive(true);
+    useDesignStore.getState().setDragModeActive(false);
+
+    useDesignStore.getState().setPending({ kind: "floor", catalogId: "chair-ergonomic" });
+    useDesignStore.getState().placeFloorItem({ x: 0, z: 0 });
+    expect(useDesignStore.getState().floorItems).toHaveLength(1);
+  });
+});
+
 describe("loadDesign", () => {
   it("replaces floorItems/deskItems and resets history", () => {
     useDesignStore.getState().setPending({ kind: "floor", catalogId: "chair-ergonomic" });

@@ -3,8 +3,9 @@
 import { useState } from "react";
 import clsx from "clsx";
 import { CATALOG } from "@/lib/catalog";
-import { formatUsd } from "@/lib/pricing";
+import { formatCurrency } from "@/lib/currency";
 import { useDesignStore } from "@/store/design-store";
+import { useUiStore } from "@/store/ui-store";
 import { ItemThumbnail } from "./ItemThumbnail";
 import { ItemPreviewModal } from "./ItemPreviewModal";
 import type { CatalogItem, ItemCategory } from "@/lib/types";
@@ -29,13 +30,20 @@ export function CatalogPanel() {
   const pending = useDesignStore((s) => s.pending);
   const clearPending = useDesignStore((s) => s.clearPending);
   const selectedDeskInstanceId = useDesignStore((s) => s.selectedDeskInstanceId);
+  const dragModeActive = useDesignStore((s) => s.dragModeActive);
+  const currency = useUiStore((s) => s.currency);
 
   const activeTab = TABS.find((t) => t.id === tab)!;
   const items = CATALOG.filter((i) => activeTab.categories.includes(i.category));
   const isDeskSlotTab = activeTab.categories.every((c) => c === "monitor" || c === "accessory");
 
   return (
-    <div className="flex h-full flex-col">
+    <div
+      className={clsx(
+        "flex h-full flex-col transition-opacity",
+        dragModeActive && "pointer-events-none opacity-40",
+      )}
+    >
       <div className="flex gap-1 overflow-x-auto border-b border-border px-3 pt-3">
         {TABS.map((t) => (
           <button
@@ -88,7 +96,7 @@ export function CatalogPanel() {
                 <p className="truncate text-sm font-medium">{item.name}</p>
                 <p className="truncate text-xs text-muted">{item.description}</p>
                 <p className="mt-0.5 text-xs font-semibold text-accent">
-                  {formatUsd(item.weeklyPriceUsdCents)}
+                  {formatCurrency(item.weeklyPriceUsdCents, currency)}
                   <span className="text-muted">/week</span>
                 </p>
               </div>

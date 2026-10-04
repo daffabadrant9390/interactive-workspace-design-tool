@@ -43,6 +43,13 @@ interface DesignState {
    * selectedDeskInstanceId, which specifically means "receives new desk-slot
    * items". Drives the on-canvas Move/Rotate/Remove toolbar. */
   selectedFloorInstanceId: string | null;
+  /** Mobile "drag mode": lets the camera pan freely to see parts of the room
+   * that don't fit on a small screen, at the cost of every other mutating
+   * action in the app (placing, selecting, undo/redo, toolbar controls...)
+   * being disabled — a plain camera drag should never also place or select
+   * something underneath it. Toggled from a floating button; see
+   * WorkspaceApp. */
+  dragModeActive: boolean;
 
   setPending: (p: PendingPlacement) => void;
   clearPending: () => void;
@@ -67,6 +74,8 @@ interface DesignState {
   undo: () => void;
   redo: () => void;
   loadDesign: (snap: DesignSnapshot) => void;
+  setDragModeActive: (active: boolean) => void;
+  toggleDragMode: () => void;
 }
 
 function snapshot(state: DesignState): DesignSnapshot {
@@ -87,11 +96,19 @@ export const useDesignStore = create<DesignState>((set, get) => ({
   future: [],
   selectedDeskInstanceId: null,
   selectedFloorInstanceId: null,
+  dragModeActive: false,
 
-  setPending: (p) => set({ pending: p, lastError: null }),
-  clearPending: () => set({ pending: null }),
+  setPending: (p) => {
+    if (get().dragModeActive) return;
+    set({ pending: p, lastError: null });
+  },
+  clearPending: () => {
+    if (get().dragModeActive) return;
+    set({ pending: null });
+  },
 
   placeFloorItem: (pos, rotationY = 0) => {
+    if (get().dragModeActive) return;
     const { pending, floorItems } = get();
     if (!pending || pending.kind !== "floor") return;
     const item = getCatalogItem(pending.catalogId);
@@ -121,6 +138,7 @@ export const useDesignStore = create<DesignState>((set, get) => ({
   },
 
   beginMoveFloorItem: (instanceId) => {
+    if (get().dragModeActive) return;
     const target = get().floorItems.find((f) => f.instanceId === instanceId);
     if (!target) return;
     set({
@@ -131,6 +149,7 @@ export const useDesignStore = create<DesignState>((set, get) => ({
   },
 
   moveFloorItem: (instanceId, pos) => {
+    if (get().dragModeActive) return;
     const { floorItems } = get();
     const target = floorItems.find((f) => f.instanceId === instanceId);
     if (!target) return;
@@ -155,6 +174,7 @@ export const useDesignStore = create<DesignState>((set, get) => ({
   },
 
   addDeskSlotItem: (catalogId, color) => {
+    if (get().dragModeActive) return;
     const { selectedDeskInstanceId, floorItems, deskItems } = get();
     if (!selectedDeskInstanceId) {
       set({ lastError: "Select a desk first — click one in the room." });
@@ -191,6 +211,7 @@ export const useDesignStore = create<DesignState>((set, get) => ({
   },
 
   removeFloorItem: (instanceId) => {
+    if (get().dragModeActive) return;
     set((state) => ({
       history: [...state.history, snapshot(state)],
       future: [],
@@ -205,6 +226,7 @@ export const useDesignStore = create<DesignState>((set, get) => ({
   },
 
   removeDeskItem: (instanceId) => {
+    if (get().dragModeActive) return;
     set((state) => ({
       history: [...state.history, snapshot(state)],
       future: [],
@@ -214,6 +236,7 @@ export const useDesignStore = create<DesignState>((set, get) => ({
 
   rotateFloorItem: (instanceId) => {
     set((state) => {
+      if (state.dragModeActive) return state;
       const target = state.floorItems.find((f) => f.instanceId === instanceId);
       if (!target) return state;
       const nextRotation = ((target.rotationY + 90) % 360) as 0 | 90 | 180 | 270;
@@ -242,6 +265,7 @@ export const useDesignStore = create<DesignState>((set, get) => ({
 
   rotateDeskItem: (instanceId) => {
     set((state) => {
+      if (state.dragModeActive) return state;
       const target = state.deskItems.find((d) => d.instanceId === instanceId);
       if (!target) return state;
       const nextRotation = (((target.rotationY ?? 0) + 90) % 360) as 0 | 90 | 180 | 270;
@@ -256,12 +280,25 @@ export const useDesignStore = create<DesignState>((set, get) => ({
     });
   },
 
-  selectDesk: (instanceId) => set({ selectedDeskInstanceId: instanceId }),
-  selectFloorItem: (instanceId) => set({ selectedFloorInstanceId: instanceId }),
-  setDuration: (d) => set({ duration: d }),
-  setCycles: (c) => set({ cycles: Math.max(1, c) }),
+  selectDesk: (instanceId) => {
+    if (get().dragModeActive) return;
+    set({ selectedDeskInstanceId: instanceId });
+  },
+  selectFloorItem: (instanceId) => {
+    if (get().dragModeActive) return;
+    set({ selectedFloorInstanceId: instanceId });
+  },
+  setDuration: (d) => {
+    if (get().dragModeActive) return;
+    set({ duration: d });
+  },
+  setCycles: (c) => {
+    if (get().dragModeActive) return;
+    set({ cycles: Math.max(1, c) });
+  },
 
   applyPersona: (persona) => {
+    if (get().dragModeActive) return;
     set((state) => ({ history: [...state.history, snapshot(state)], future: [] }));
 
     const floorItems: PlacedFloorItem[] = [];
@@ -304,6 +341,7 @@ export const useDesignStore = create<DesignState>((set, get) => ({
   },
 
   applySuggestedItems: (catalogIds) => {
+    if (get().dragModeActive) return;
     set((state) => ({ history: [...state.history, snapshot(state)], future: [] }));
 
     const { floorItems: currentFloor, deskItems: currentDesk } = get();
@@ -355,6 +393,7 @@ export const useDesignStore = create<DesignState>((set, get) => ({
   },
 
   reset: () => {
+    if (get().dragModeActive) return;
     set((state) => ({
       history: [...state.history, snapshot(state)],
       future: [],
@@ -369,7 +408,7 @@ export const useDesignStore = create<DesignState>((set, get) => ({
 
   undo: () => {
     set((state) => {
-      if (state.history.length === 0) return state;
+      if (state.dragModeActive || state.history.length === 0) return state;
       const previous = state.history[state.history.length - 1];
       return {
         ...state,
@@ -384,7 +423,7 @@ export const useDesignStore = create<DesignState>((set, get) => ({
 
   redo: () => {
     set((state) => {
-      if (state.future.length === 0) return state;
+      if (state.dragModeActive || state.future.length === 0) return state;
       const next = state.future[state.future.length - 1];
       return {
         ...state,
@@ -398,4 +437,14 @@ export const useDesignStore = create<DesignState>((set, get) => ({
   },
 
   loadDesign: (snap) => set({ floorItems: snap.floorItems, deskItems: snap.deskItems, history: [], future: [] }),
+
+  setDragModeActive: (active) =>
+    set(
+      active
+        ? // Turning drag mode on cancels anything in progress — a stray tap
+          // mid-pan should never finish placing or selecting something.
+          { dragModeActive: true, pending: null, selectedDeskInstanceId: null, selectedFloorInstanceId: null }
+        : { dragModeActive: false },
+    ),
+  toggleDragMode: () => get().setDragModeActive(!get().dragModeActive),
 }));

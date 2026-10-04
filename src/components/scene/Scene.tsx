@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense } from "react";
+import { MOUSE, TOUCH } from "three";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, ContactShadows, PerspectiveCamera } from "@react-three/drei";
 import { RoomFloor } from "./RoomFloor";
@@ -24,6 +25,7 @@ import { ROOM_WIDTH, ROOM_DEPTH } from "@/lib/catalog";
  */
 export function Scene() {
   const floorItems = useDesignStore((s) => s.floorItems);
+  const dragModeActive = useDesignStore((s) => s.dragModeActive);
   const centerX = (ROOM_WIDTH) / 2;
   const centerZ = (ROOM_DEPTH) / 2;
 
@@ -33,7 +35,7 @@ export function Scene() {
       frameloop="demand"
       gl={{ antialias: true, powerPreference: "high-performance" }}
       shadows={false}
-      className="!touch-none"
+      className={dragModeActive ? "!touch-none !cursor-grab ring-4 ring-inset ring-accent/50" : "!touch-none"}
     >
       <color attach="background" args={["#f4f6fa"]} />
       <PerspectiveCamera makeDefault position={[centerX + 6, 7, centerZ + 8]} fov={40} />
@@ -68,7 +70,27 @@ export function Scene() {
         maxDistance={16}
         minPolarAngle={0.35}
         maxPolarAngle={Math.PI / 2.3}
-        enablePan={false}
+        // Panning is off during normal editing (a stray drag shouldn't shift
+        // the whole room), but turns on in "drag mode" — see WorkspaceApp's
+        // floating drag button — so a small screen can still slide the view
+        // to reach whatever's cropped off the edge.
+        enablePan={dragModeActive}
+        screenSpacePanning
+        // drei/three default a single touch/left-click to ROTATE even with
+        // enablePan true — pan only kicks in on a two-finger/right-click
+        // drag otherwise. In drag mode we want the opposite: the whole
+        // point is a one-finger drag that slides the room into view, not
+        // one that spins it in place.
+        touches={
+          dragModeActive
+            ? { ONE: TOUCH.PAN, TWO: TOUCH.DOLLY_PAN }
+            : { ONE: TOUCH.ROTATE, TWO: TOUCH.DOLLY_PAN }
+        }
+        mouseButtons={
+          dragModeActive
+            ? { LEFT: MOUSE.PAN, MIDDLE: MOUSE.DOLLY, RIGHT: MOUSE.ROTATE }
+            : { LEFT: MOUSE.ROTATE, MIDDLE: MOUSE.DOLLY, RIGHT: MOUSE.PAN }
+        }
       />
       <InvalidateOnChange />
     </Canvas>

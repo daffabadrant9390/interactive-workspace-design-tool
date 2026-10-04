@@ -18,6 +18,7 @@ export function Toolbar({ onOpenAdvisor }: { onOpenAdvisor: () => void }) {
   const applyPersona = useDesignStore((s) => s.applyPersona);
   const lastError = useDesignStore((s) => s.lastError);
   const setPending = useDesignStore((s) => s.setPending);
+  const dragModeActive = useDesignStore((s) => s.dragModeActive);
 
   useEffect(() => {
     if (!lastError) return;
@@ -26,22 +27,27 @@ export function Toolbar({ onOpenAdvisor }: { onOpenAdvisor: () => void }) {
   }, [lastError]);
 
   return (
-    <div className="flex flex-wrap items-center gap-2 border-b border-border bg-surface px-4 py-3">
+    <div
+      className={clsx(
+        "flex items-center gap-2 overflow-x-auto border-b border-border bg-surface px-4 py-3 transition-opacity lg:flex-wrap lg:overflow-visible",
+        dragModeActive && "pointer-events-none opacity-40",
+      )}
+    >
       <button
         onClick={onOpenAdvisor}
-        className="rounded-full bg-accent px-3 py-1.5 text-xs font-semibold text-accent-foreground hover:opacity-90"
+        className="shrink-0 rounded-full bg-accent px-3 py-1.5 text-xs font-semibold text-accent-foreground hover:opacity-90"
       >
         ✨ Ask AI
       </button>
 
-      <div className="mx-1 h-6 w-px bg-border" />
+      <div className="mx-1 h-6 w-px shrink-0 bg-border" />
 
-      <div className="flex items-center gap-1.5">
+      <div className="flex shrink-0 items-center gap-1.5">
         {PERSONAS.map((p) => (
           <button
             key={p.id}
             onClick={() => applyPersona(p)}
-            className="rounded-full border border-border bg-surface-2 px-3 py-1.5 text-xs font-medium hover:bg-border"
+            className="shrink-0 whitespace-nowrap rounded-full border border-border bg-surface-2 px-3 py-1.5 text-xs font-medium hover:bg-border"
             title={`Quick-start: ${p.label}`}
           >
             <span className="mr-1">{p.emoji}</span>
@@ -50,9 +56,9 @@ export function Toolbar({ onOpenAdvisor }: { onOpenAdvisor: () => void }) {
         ))}
       </div>
 
-      <div className="mx-2 h-6 w-px bg-border" />
+      <div className="mx-2 h-6 w-px shrink-0 bg-border" />
 
-      <div className="flex items-center gap-1 rounded-full border border-border bg-surface-2 p-1 text-xs">
+      <div className="flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full border border-border bg-surface-2 p-1 text-xs">
         <button
           onClick={() => setDuration("week")}
           className={clsx("rounded-full px-2.5 py-1 font-medium", duration === "week" && "bg-accent text-accent-foreground")}
@@ -67,7 +73,7 @@ export function Toolbar({ onOpenAdvisor }: { onOpenAdvisor: () => void }) {
         </button>
       </div>
 
-      <div className="flex items-center gap-1 text-xs text-muted">
+      <div className="flex shrink-0 items-center gap-1 whitespace-nowrap text-xs text-muted">
         <span>for</span>
         <input
           type="number"
@@ -80,35 +86,35 @@ export function Toolbar({ onOpenAdvisor }: { onOpenAdvisor: () => void }) {
         <span>{duration === "week" ? "week(s)" : "month(s)"}</span>
       </div>
 
-      <div className="ml-auto flex items-center gap-2">
+      <div className="ml-auto flex shrink-0 items-center gap-2">
         {lastError && (
-          <span className="rounded-full bg-invalid/15 px-3 py-1.5 text-xs font-medium text-invalid">
+          <span className="shrink-0 whitespace-nowrap rounded-full bg-invalid/15 px-3 py-1.5 text-xs font-medium text-invalid">
             {lastError}
           </span>
         )}
         <button
           onClick={() => setPending(null)}
-          className="rounded-full border border-border px-3 py-1.5 text-xs font-medium hover:bg-surface-2"
+          className="shrink-0 whitespace-nowrap rounded-full border border-border px-3 py-1.5 text-xs font-medium hover:bg-surface-2"
         >
           Cancel placing
         </button>
         <button
           onClick={undo}
           disabled={history.length === 0}
-          className="rounded-full border border-border px-3 py-1.5 text-xs font-medium hover:bg-surface-2 disabled:cursor-not-allowed disabled:opacity-30"
+          className="shrink-0 whitespace-nowrap rounded-full border border-border px-3 py-1.5 text-xs font-medium hover:bg-surface-2 disabled:cursor-not-allowed disabled:opacity-30"
         >
           Undo
         </button>
         <button
           onClick={redo}
           disabled={future.length === 0}
-          className="rounded-full border border-border px-3 py-1.5 text-xs font-medium hover:bg-surface-2 disabled:cursor-not-allowed disabled:opacity-30"
+          className="shrink-0 whitespace-nowrap rounded-full border border-border px-3 py-1.5 text-xs font-medium hover:bg-surface-2 disabled:cursor-not-allowed disabled:opacity-30"
         >
           Redo
         </button>
         <button
           onClick={reset}
-          className="rounded-full border border-invalid/40 px-3 py-1.5 text-xs font-medium text-invalid hover:bg-invalid/10"
+          className="shrink-0 whitespace-nowrap rounded-full border border-invalid/40 px-3 py-1.5 text-xs font-medium text-invalid hover:bg-invalid/10"
         >
           Clear room
         </button>
